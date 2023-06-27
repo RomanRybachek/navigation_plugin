@@ -1,0 +1,1 @@
+cp navigation_plugin.py %TOOLS_PATH%\IDA_PRO\plugins
