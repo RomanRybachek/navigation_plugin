@@ -1,4 +1,5 @@
 import ida_name
+import ida_nalt
 import ida_lines
 import ida_kernwin
 import idautils
@@ -23,6 +24,7 @@ class FuncInfo:
         self.switches       = 0
 
 ALL_FUNC_INFO = {}
+ALL_IMP = {}
 DATA_OFFSET = 1
 CODE_NEAR_CALL = 17
 CODE_NEAR_JUMP = 19
@@ -39,11 +41,26 @@ def print_all_funcinfo():
             print("sub:", hex(sub))
         for imp in v.import_calls:
             print("imp:", hex(imp))
+        if v.strings > 0:
+            print("Str:", v.strings)
+        if v.global_data > 0:
+            print("data:", v.global_data)
         print()
-
 
 def advanced_analysis():
     pass
+
+def get_all_imports(): 
+
+    all_imports = {}
+    modules_num = ida_nalt.get_import_module_qty()
+
+    for module in range(modules_num):
+        def imp_cb(ea, imp_name, ordinal):
+            all_imports[ea] = imp_name
+            return True
+        ida_nalt.enum_import_names(module, imp_cb)
+    return all_imports
 
 def handle_loc_xref(ea):
     def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
@@ -69,7 +86,6 @@ def handle_sub_xref(ea):
                 func_info_obj.sub_funcs.update({ea:count + 1})
     generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
 
-
 def handle_named_sub_xref(ea):
     def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
         if func_info_obj == 0:
@@ -84,7 +100,7 @@ def handle_named_sub_xref(ea):
                 func_info_obj.named_funcs.update({ea:count + 1})
     generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
 
-def handle_imp_wraps_xrefs(ea):
+def handle_imp_xrefs(ea):
     def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
         if func_info_obj == 0:
             func_info_obj = FuncInfo()
@@ -97,6 +113,28 @@ def handle_imp_wraps_xrefs(ea):
             else:
                 func_info_obj.import_calls.update({ea:count + 1})
 
+    generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
+
+def handle_strings_xrefs(ea):
+    def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
+        if func_info_obj == 0:
+            func_info_obj = FuncInfo()
+            func_info_obj.strings += 1
+            ALL_FUNC_INFO.update({func_struct.start_ea:func_info_obj})
+        else:
+            func_info_obj.strings += 1
+        pass
+    generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
+
+def handle_data_xrefs(ea):
+    def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
+        if func_info_obj == 0:
+            func_info_obj = FuncInfo()
+            func_info_obj.global_data += 1
+            ALL_FUNC_INFO.update({func_struct.start_ea:func_info_obj})
+        else:
+            func_info_obj.global_data += 1
+        pass
     generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
 
 def generic_part_for_xrefs_handler(ea, add_xref_handler):
@@ -154,6 +192,11 @@ def basic_analysis():
         elif hdr_name[:4] == "jpt_":            # Handle switch
             pass
         elif ida_bytes.is_strlit(flags) == True:    # Handle strings
+            handle_strings_xrefs(head)
+        elif head in ALL_IMP:
+            handle_imp_xrefs(head)
+        elif ida_bytes.is_data(flags) == True:    # Handle strings
+            handle_data_xrefs(head)
             pass
         else:
             # if ida_bytes.is_data(f):
@@ -167,9 +210,14 @@ def basic_analysis():
     for n in named_subs:
         handle_named_sub_xref(n)
     for i in import_wraps:
-        handle_imp_wraps_xrefs(i)
+        handle_imp_xrefs(i)
+
+def init():
+    global ALL_IMP
+    ALL_IMP = get_all_imports()
 
 def main():
+    init()
     basic_analysis()
     print_all_funcinfo()
 
