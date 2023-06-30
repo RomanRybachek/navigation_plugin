@@ -21,7 +21,8 @@ class FuncInfo:
         self.loc_funcs      = set()
         self.sub_funcs      = {} # ea:count
         self.named_funcs    = {} # ea:count
-        self.switches       = 0
+        self.switches       = set()
+        self.switches_num   = 0
 
 ALL_FUNC_INFO = {}
 ALL_IMP = {}
@@ -45,6 +46,8 @@ def print_all_funcinfo():
             print("Str:", v.strings)
         if v.global_data > 0:
             print("data:", v.global_data)
+        for sw in v.switches:
+            print("switch:", hex(sw))
         print()
 
 def advanced_analysis():
@@ -137,6 +140,16 @@ def handle_data_xrefs(ea):
         pass
     generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
 
+def handle_jpt_xrefs(ea):
+    def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
+        if func_info_obj == 0:                                          # If we did not find it we create new FuncInfo object
+            func_info_obj = FuncInfo()
+            func_info_obj.switches.add(ea)                             # FuncInfo has a set for local routines.
+            ALL_FUNC_INFO.update({func_struct.start_ea:func_info_obj})  # We add this local routine to this set.
+        else:
+            func_info_obj.switches.add(ea)
+    generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
+
 def generic_part_for_xrefs_handler(ea, add_xref_handler):
     global ALL_FUNC_INFO
     
@@ -190,6 +203,7 @@ def basic_analysis():
             handle_sub_xref(head)
             pass
         elif hdr_name[:4] == "jpt_":            # Handle switch
+            handle_jpt_xrefs(head)
             pass
         elif ida_bytes.is_strlit(flags) == True:    # Handle strings
             handle_strings_xrefs(head)
