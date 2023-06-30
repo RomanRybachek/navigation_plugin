@@ -20,6 +20,7 @@ class FuncInfo:
         self.loc_funcs      = set()
         self.sub_funcs      = {} # ea:count
         self.named_funcs    = {} # ea:count
+        self.switches       = 0
 
 ALL_FUNC_INFO = {}
 DATA_OFFSET = 1
@@ -32,6 +33,12 @@ def print_all_funcinfo():
         print("func:", hex(k))
         for sub_r, sub_c in v.named_funcs.items():
             print("named:", hex(sub_r), sub_c)
+        for loc in v.loc_funcs:
+            print("loc:", hex(loc))
+        for sub in v.sub_funcs:
+            print("sub:", hex(sub))
+        for imp in v.import_calls:
+            print("imp:", hex(imp))
         print()
 
 
@@ -39,29 +46,17 @@ def advanced_analysis():
     pass
 
 def handle_loc_xref(ea):
-    global ALL_FUNC_INFO
-
-    for xref in idautils.XrefsTo(ea):                                   # Go through all xrefs pointing to this local routine
-        func_struct = ida_funcs.get_func(xref.frm)                      # Try to get function from xref
-        if func_struct == None:                                         # If it is not a function go ahead
-            continue
-        func_info_obj = ALL_FUNC_INFO.get(func_struct.start_ea, 0)      # If it is a function we try to find it in the global dict
+    def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
         if func_info_obj == 0:                                          # If we did not find it we create new FuncInfo object
             func_info_obj = FuncInfo()
             func_info_obj.loc_funcs.add(ea)                             # FuncInfo has a set for local routines.
             ALL_FUNC_INFO.update({func_struct.start_ea:func_info_obj})  # We add this local routine to this set.
         else:
             func_info_obj.loc_funcs.add(ea)
+    generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
 
 def handle_sub_xref(ea):
-    global ALL_FUNC_INFO
-
-    for xref in idautils.XrefsTo(ea):                                   # Go through all xrefs pointing to this subroutine 
-        func_struct = ida_funcs.get_func(xref.frm)                      # Try to get function from xref
-        if func_struct == None:                                         # If it is not a function go ahead
-            continue
-        print(hex(func_struct.start_ea))
-        func_info_obj = ALL_FUNC_INFO.get(func_struct.start_ea, 0)
+    def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
         if func_info_obj == 0:
             func_info_obj = FuncInfo()
             func_info_obj.sub_funcs.update({ea:1})                      
@@ -72,16 +67,11 @@ def handle_sub_xref(ea):
                 func_info_obj.sub_funcs.update({ea:1})
             else:
                 func_info_obj.sub_funcs.update({ea:count + 1})
+    generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
+
 
 def handle_named_sub_xref(ea):
-    global ALL_FUNC_INFO
-
-    for xref in idautils.XrefsTo(ea):                                   
-        func_struct = ida_funcs.get_func(xref.frm)                      
-        if func_struct == None:                                         
-            continue
-        print(hex(func_struct.start_ea))
-        func_info_obj = ALL_FUNC_INFO.get(func_struct.start_ea, 0)
+    def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
         if func_info_obj == 0:
             func_info_obj = FuncInfo()
             func_info_obj.named_funcs.update({ea:1})                      
@@ -92,16 +82,10 @@ def handle_named_sub_xref(ea):
                 func_info_obj.named_funcs.update({ea:1})
             else:
                 func_info_obj.named_funcs.update({ea:count + 1})
+    generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
 
 def handle_imp_wraps_xrefs(ea):
-    global ALL_FUNC_INFO
-
-    for xref in idautils.XrefsTo(ea):                                   
-        func_struct = ida_funcs.get_func(xref.frm)                      
-        if func_struct == None:                                         
-            continue
-        print(hex(func_struct.start_ea))
-        func_info_obj = ALL_FUNC_INFO.get(func_struct.start_ea, 0)
+    def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
         if func_info_obj == 0:
             func_info_obj = FuncInfo()
             func_info_obj.import_calls.update({ea:1})                      
@@ -113,7 +97,19 @@ def handle_imp_wraps_xrefs(ea):
             else:
                 func_info_obj.import_calls.update({ea:count + 1})
 
-def is_import_wrap(ea):
+    generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
+
+def generic_part_for_xrefs_handler(ea, add_xref_handler):
+    global ALL_FUNC_INFO
+    
+    for xref in idautils.XrefsTo(ea):                                   # Go through all xrefs and create FuncInfo objects
+        func_struct = ida_funcs.get_func(xref.frm)                      # Check if xrefs from function
+        if func_struct == None:                                         
+            continue
+        func_info_obj = ALL_FUNC_INFO.get(func_struct.start_ea, 0)      # If it is, we are trying to get already created FuncInfo obj 
+        add_xref_handler(func_info_obj, func_struct, ea)                             # And in this handler we do actions that specific for different xrefs
+
+def is_import_wrap(ea)->bool:
     func_struct = ida_funcs.get_func(ea)
     if func_struct.size() < 10:
         disasm_line = idc.GetDisasm(ea)
@@ -142,15 +138,30 @@ def basic_analysis():
     global ALL_FUNC_INFO
     heads = idautils.Heads()
 
-    for head in heads:
+    for head in heads:                          # Go through all data and code marks.
 
-        hdr_name = ida_name.get_ea_name(head)
+        hdr_name    = ida_name.get_ea_name(head)
+        flags       = ida_bytes.get_flags(head)
+
         if len(hdr_name) == 0:
             continue
-        if hdr_name[:4] == "loc_":
+        if hdr_name[:4] == "loc_":              # Handle local routines
             handle_loc_xref(head)
-        elif hdr_name[:4] == "sub_":
+            pass
+        elif hdr_name[:4] == "sub_":            # Handle custom functions
             handle_sub_xref(head)
+            pass
+        elif hdr_name[:4] == "jpt_":            # Handle switch
+            pass
+        elif ida_bytes.is_strlit(flags) == True:    # Handle strings
+            pass
+        else:
+            # if ida_bytes.is_data(f):
+            #     print("is data", end=' ')
+            # elif ida_bytes.is_func(f):
+            #     print("is func", end=' ')
+            # print(hdr_name)
+            pass
     
     named_subs, import_wraps = obtain_named_subroutines_and_import_wrappers()
     for n in named_subs:
@@ -158,10 +169,9 @@ def basic_analysis():
     for i in import_wraps:
         handle_imp_wraps_xrefs(i)
 
-
 def main():
     basic_analysis()
-    # print_all_funcinfo()
+    print_all_funcinfo()
 
     # check_funcs()
     pass
