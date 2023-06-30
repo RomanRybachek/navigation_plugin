@@ -189,35 +189,29 @@ def basic_analysis():
     global ALL_FUNC_INFO
     heads = idautils.Heads()
 
+    check_deb = []
     for head in heads:                          # Go through all data and code marks.
 
         hdr_name    = ida_name.get_ea_name(head)
         flags       = ida_bytes.get_flags(head)
 
+
         if len(hdr_name) == 0:
             continue
-        if hdr_name[:4] == "loc_":              # Handle local routines
+
+        if ida_bytes.is_flow(flags) == True or hdr_name[:4] == "loc_":              # Handle local routines
             handle_loc_xref(head)
-            pass
         elif hdr_name[:4] == "sub_":            # Handle custom functions
             handle_sub_xref(head)
-            pass
         elif hdr_name[:4] == "jpt_":            # Handle switch
             handle_jpt_xrefs(head)
-            pass
         elif ida_bytes.is_strlit(flags) == True:    # Handle strings
             handle_strings_xrefs(head)
         elif head in ALL_IMP:
             handle_imp_xrefs(head)
         elif ida_bytes.is_data(flags) == True:    # Handle strings
             handle_data_xrefs(head)
-            pass
         else:
-            # if ida_bytes.is_data(f):
-            #     print("is data", end=' ')
-            # elif ida_bytes.is_func(f):
-            #     print("is func", end=' ')
-            # print(hdr_name)
             pass
     
     named_subs, import_wraps = obtain_named_subroutines_and_import_wrappers()
