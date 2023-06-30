@@ -25,6 +25,9 @@ def print_all_funcinfo():
             print("switch:", hex(sw))
         print()
 
+def advanced_analysis():
+    pass
+
 def basic_analysis():
 
     global ALL_FUNC_INFO

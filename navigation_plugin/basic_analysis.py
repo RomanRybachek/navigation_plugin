@@ -3,9 +3,6 @@ from navigation_plugin.global_data_and_classes import *
 
 idaapi.require("navigation_plugin.global_data_and_classes")
 
-def advanced_analysis():
-    pass
-
 def get_all_imports(): 
 
     all_imports = {}
