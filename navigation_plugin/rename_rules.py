@@ -1,3 +1,12 @@
+# ----------- DESCRIPTION: HOW TO ADD A RULE -------------
+# Each rule must return True if it has been applied. If a rule has not been applied it must return False,
+# and then there will be attempt to apply other rules. If a rule return True there will be no attempt to
+# apply other rules to the currently analysed function.
+
+# After a rule has been created it must be added to RULE_SET via setup_rule_set() function.
+# Just add to setup_rule_set() line: 
+#                                       RULE_SET.append(your_rule_name)
+
 import idaapi
 import ida_name
 import ida_nalt
@@ -39,43 +48,6 @@ def rule_generic_name(ea, obj:FuncInfo):
     idaapi.set_name(ea, name, idaapi.SN_FORCE | idaapi.SN_NOCHECK)
     return True
 
-def one_line_function():
-    pass
-
-def two_line_function():
-    pass
-
-def tiny_function(ea, obj:FuncInfo):
-    func_t_obj = ida_funcs.get_func(ea) 
-    code_items = list(idautils.Heads(func_t_obj.start_ea, func_t_obj.end_ea))
-    instr_num = len(code_items)
-    if instr_num > 2:
-        return False
-    if instr_num == 1:
-        one_line_function()
-    if instr_num == 2:
-        two_line_function()
-        i1 = code_items[0]
-        i2 = code_items[1]
-        mnem = ida_ua.ua_mnem(i1)
-        line = idc.GetDisasm(i1)
-        # print(ida_ua.ua_mnem(i1), "|", line)
-
-        mnem = ida_ua.ua_mnem(i2)
-        line = idc.GetDisasm(i2)
-        # print(ida_ua.ua_mnem(i2), "|", line)
-        
-# idaapi.set_name(f_info.addr, f_info.new_name, idaapi.SN_FORCE | idaapi.SN_NOCHECK)
-
-# ----------- DESCRIPTION: HOW TO ADD A RULE -------------
-# Each rule must return True if it has been applied. If a rule has not been applied it must return False,
-# and then there will be attempt to apply other rules. If a rule return True there will be no attempt to
-# apply other rules to the currently analysed function.
-
-# After a rule has been created it must be added to RULE_SET via setup_rule_set() function.
-# Just add to setup_rule_set() line: 
-#                                       RULE_SET.append(your_rule_name)
-
 def load_rules():
     global RULE_MODULES
     
@@ -98,7 +70,6 @@ def run_rename_rules_for_all_fuctions():
             continue
         rule_ret = False
         for module in RULE_MODULES:
-            print("trying to call rule")
             rule_ret = module.rule_entry(ea, obj)
             if rule_ret == True:
                 break

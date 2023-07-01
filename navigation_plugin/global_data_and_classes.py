@@ -8,7 +8,7 @@ import time
 import idc
 import ida_bytes
 import ida_xref
-
+import ida_ua
 
 class FuncInfo:
     def __init__(self):
