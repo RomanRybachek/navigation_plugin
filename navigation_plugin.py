@@ -2,9 +2,11 @@ import idaapi
 
 from navigation_plugin.basic_analysis import *
 from navigation_plugin.global_data_and_classes import *
+from navigation_plugin.rename_rules import *
 
 idaapi.require("navigation_plugin.basic_analysis")
 idaapi.require("navigation_plugin.global_data_and_classes")
+idaapi.require("navigation_plugin.rename_rules")
 
 def print_all_funcinfo():
     for k, v in ALL_FUNC_INFO.items():
@@ -26,6 +28,11 @@ def print_all_funcinfo():
         print()
 
 def advanced_analysis():
+    # Что должен мочь advanced analysis?
+    # - Находить циклы.
+    # - Находить xrefы на unk_ данные.
+
+    # хм... Чет как будто функционал не стоит реализации. 
     pass
 
 def basic_analysis():
@@ -34,7 +41,7 @@ def basic_analysis():
     heads = idautils.Heads()
 
     check_deb = []
-    for head in heads:                          # Go through all data and code marks.
+    for head in heads:                                                  # Go through all data and code marks.
 
         hdr_name    = ida_name.get_ea_name(head)
         flags       = ida_bytes.get_flags(head)
@@ -42,17 +49,17 @@ def basic_analysis():
         if len(hdr_name) == 0:
             continue
 
-        if ida_bytes.is_flow(flags) == True or hdr_name[:4] == "loc_":              # Handle local routines
+        if ida_bytes.is_flow(flags) == True or hdr_name[:4] == "loc_":  # Handle local routines
             handle_loc_xref(head)
-        elif hdr_name[:4] == "sub_":            # Handle custom functions
+        elif hdr_name[:4] == "sub_":                                    # Handle custom functions
             handle_sub_xref(head)
-        elif hdr_name[:4] == "jpt_":            # Handle switch
+        elif hdr_name[:4] == "jpt_":                                    # Handle switches
             handle_jpt_xrefs(head)
-        elif ida_bytes.is_strlit(flags) == True:    # Handle strings
+        elif ida_bytes.is_strlit(flags) == True:                        # Handle strings
             handle_strings_xrefs(head)
-        elif head in ALL_IMP:
+        elif head in ALL_IMP:                                           # Handle imports (but not import wrappers)
             handle_imp_xrefs(head)
-        elif ida_bytes.is_data(flags) == True:    # Handle strings
+        elif ida_bytes.is_data(flags) == True:                          # Handle data
             handle_data_xrefs(head)
         else:
             pass
@@ -60,20 +67,32 @@ def basic_analysis():
     named_subs, import_wraps = obtain_named_subroutines_and_import_wrappers()
     for n in named_subs:
         handle_named_sub_xref(n)
-    for i in import_wraps:
-        handle_imp_xrefs(i)
+    for i in import_wraps:                                              # Import wrappers are functions that only have
+        handle_imp_xrefs(i)                                             # jmp instruction to address of imported function
+
+    all_funcs = idautils.Functions()
+    for f in all_funcs:
+        if f not in ALL_FUNC_INFO:
+            ALL_FUNC_INFO.update({f:FuncInfo()})
+
+    setup_FuncInfo_objects()
 
 def init():
     global ALL_IMP
     ALL_IMP = get_all_imports()
 
+def fini():
+    global ALL_IMP
+    global ALL_FUNC_INFO
+
+    ALL_FUNC_INFO.clear()
+    ALL_IMP.clear()
+
 def main():
     init()
     basic_analysis()
-    print_all_funcinfo()
-
-    # check_funcs()
-    pass
+    run_rename_rules_for_all_fuctions()
+    fini()
 
 class navigation_plugin_class(idaapi.plugin_t):
 
