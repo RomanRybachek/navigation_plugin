@@ -31,7 +31,7 @@ def load_rules():
     modules_names = ["navigation_plugin.rules." + i[:-3] for i in os.listdir(cur_dir + "rules") if i[-3:] == ".py" and i != "__init__.py"]
     modules = []
     for m in modules_names:
-        print(m)
+        # print(m)
         module = __import__(m, fromlist=["rule_entry"])
         importlib.reload(module)
         modules.append(module)

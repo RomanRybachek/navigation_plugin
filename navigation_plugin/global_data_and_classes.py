@@ -33,6 +33,7 @@ class FuncInfo:
         self.switches_num       = 0
 
         self.has_cycle          = False
+        self.hard_to_analyse    = False
 
 def is_func(ea):
     func_t_struct =  ida_funcs.get_func(ea)
@@ -59,6 +60,8 @@ def get_info_for_name(ea, obj:FuncInfo):
     name = add_tag("switch", obj.switches_num, name)
     if obj.has_cycle == True:
         name = name + "cycle_"
+    elif obj.hard_to_analyse == True:
+        name = name + "cycle_is_possible_"
     name = add_tag("d", obj.global_data, name)
     name = add_tag("s", obj.strings, name)
 

@@ -164,6 +164,8 @@ def obtain_named_subroutines_and_import_wrappers():
 
 def setup_FuncInfo_objects():
     global ALL_FUNC_INFO
+
+
     for ea, obj in ALL_FUNC_INFO.items():
         func_t_obj                  = ida_funcs.get_func(ea)
         obj.size                    = func_t_obj.size()
@@ -183,3 +185,8 @@ def setup_FuncInfo_objects():
         obj.calls                   = obj.import_calls_num + obj.internal_calls
 
         obj.switches_num            = len(obj.switches)
+# ---------------------
+    # addr=ida_kernwin.get_screen_ea()
+    # obj = ALL_FUNC_INFO[addr]
+    # print(obj)
+    # obj.has_cycle = detect_cycle(addr, obj)
