@@ -1,4 +1,6 @@
 import idaapi
+import ida_gdl
+import ida_kernwin
 import ida_name
 import ida_nalt
 import ida_lines
@@ -10,8 +12,9 @@ import idc
 import ida_bytes
 import ida_xref
 from navigation_plugin.global_data_and_classes import *
+from navigation_plugin.cycles_detection import *
 
-idaapi.require("navigation_plugin.global_data_and_classes")
+idaapi.require("navigation_plugin.cycles_detection")
 
 def get_all_imports(): 
 
@@ -151,7 +154,7 @@ def obtain_named_subroutines_and_import_wrappers():
     import_wrappers = []
     for f in all_funcs:
         func_name = ida_name.get_ea_name(f)
-        if func_name[:4] == "sub_":
+        if func_name[:4] == "sub_" or func_name[:4] == "nav_":
             continue
         if is_import_wrap(f) == True:
             import_wrappers.append(f)
@@ -166,7 +169,7 @@ def setup_FuncInfo_objects():
         obj.size                    = func_t_obj.size()
 
         obj.loc_funcs_num           = len(obj.loc_funcs)
-
+        obj.has_cycle               = detect_cycle(ea, obj)
         for imp, count in obj.import_calls.items():
             obj.import_calls_num += count
 

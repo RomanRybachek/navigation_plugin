@@ -51,7 +51,7 @@ def basic_analysis():
 
         if ida_bytes.is_flow(flags) == True or hdr_name[:4] == "loc_":  # Handle local routines
             handle_loc_xref(head)
-        elif hdr_name[:4] == "sub_":                                    # Handle custom functions
+        elif hdr_name[:4] == "sub_" or hdr_name[:4] == "nav_":          # Handle custom functions
             handle_sub_xref(head)
         elif hdr_name[:4] == "jpt_":                                    # Handle switches
             handle_jpt_xrefs(head)

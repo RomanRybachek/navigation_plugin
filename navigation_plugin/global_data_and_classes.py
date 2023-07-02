@@ -32,6 +32,8 @@ class FuncInfo:
         self.switches           = set()
         self.switches_num       = 0
 
+        self.has_cycle          = False
+
 def is_func(ea):
     func_t_struct =  ida_funcs.get_func(ea)
     if func_t_struct == None:
@@ -55,6 +57,8 @@ def get_info_for_name(ea, obj:FuncInfo):
     name = add_tag("named", obj.named_funcs_num, name)
     name = add_tag("imp", obj.import_calls_num, name)
     name = add_tag("switch", obj.switches_num, name)
+    if obj.has_cycle == True:
+        name = name + "cycle_"
     name = add_tag("d", obj.global_data, name)
     name = add_tag("s", obj.strings, name)
 
