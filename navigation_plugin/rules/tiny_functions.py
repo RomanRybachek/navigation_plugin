@@ -2,28 +2,25 @@ import idaapi
 from navigation_plugin.global_data_and_classes import *
 idaapi.require("navigation_plugin.global_data_and_classes")
 
-def one_line_function():
-    pass
-
-def two_line_function():
-    pass
-
 def rule_entry(ea, obj:FuncInfo):
     func_t_obj = ida_funcs.get_func(ea) 
     code_items = list(idautils.Heads(func_t_obj.start_ea, func_t_obj.end_ea))
     instr_num = len(code_items)
-    if instr_num > 2:
+    if instr_num > 5:
         return False
-    if instr_num == 1:
-        one_line_function()
-    if instr_num == 2:
-        two_line_function()
-        i1 = code_items[0]
-        i2 = code_items[1]
-        mnem = ida_ua.ua_mnem(i1)
-        line = idc.GetDisasm(i1)
-        print(ida_ua.ua_mnem(i1), "|", line)
-        mnem = ida_ua.ua_mnem(i2)
-        line = idc.GetDisasm(i2)
-        print(ida_ua.ua_mnem(i2), "|", line)
-    return False
+    
+    new_name = 'nav_'
+
+    for i in code_items:
+        mnem = ida_ua.ua_mnem(i)
+        if "ret" in mnem:
+            break
+        new_name += mnem + "_"
+
+    new_name += get_info_for_name(ea, obj)
+
+    if len(new_name) >= 1 and new_name[-1] == '_':
+        new_name = new_name[:-1]
+    idaapi.set_name(ea, new_name, idaapi.SN_FORCE | idaapi.SN_NOCHECK)
+    
+    return True

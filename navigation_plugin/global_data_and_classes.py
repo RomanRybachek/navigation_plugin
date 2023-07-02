@@ -42,3 +42,22 @@ if 'ALL_FUNC_INFO' not in globals():
     ALL_FUNC_INFO = {}
 if 'ALL_IMP' not in globals(): 
     ALL_IMP = {}
+
+def get_info_for_name(ea, obj:FuncInfo):
+    def add_tag(tag, val, source_str):
+        if val == 0:
+            return source_str
+        source_str = source_str + tag + str(val) + "_"
+        return source_str
+    name = ""
+    name = add_tag("loc", obj.loc_funcs_num, name)
+    name = add_tag("sub", obj.sub_funcs_num, name)
+    name = add_tag("named", obj.named_funcs_num, name)
+    name = add_tag("imp", obj.import_calls_num, name)
+    name = add_tag("switch", obj.switches_num, name)
+    name = add_tag("d", obj.global_data, name)
+    name = add_tag("s", obj.strings, name)
+
+    if len(name) >= 1 and name[-1] == '_':
+        name = name[:-1]
+    return name
