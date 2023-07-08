@@ -16,6 +16,7 @@ from navigation_plugin.global_data_and_classes import *
 idaapi.require("navigation_plugin.global_data_and_classes")
 
 RULE_MODULES = []
+LATE_RULE_MODULES = []
 
 def generic_rule(ea, obj:FuncInfo):
     name = "nav_" + get_info_for_name(ea, obj)
@@ -26,19 +27,22 @@ def generic_rule(ea, obj:FuncInfo):
 
 def load_rules():
     global RULE_MODULES
+    global LATE_RULE_MODULES
     
     cur_dir = __file__[:-len("rename_rules.py")]
     modules_names = ["navigation_plugin.rules." + i[:-3] for i in os.listdir(cur_dir + "rules") if i[-3:] == ".py" and i != "__init__.py"]
     modules = []
     for m in modules_names:
-        # print(m)
         module = __import__(m, fromlist=["rule_entry"])
         importlib.reload(module)
-        modules.append(module)
-    RULE_MODULES = modules
+        if len(m) >= 5 and m[:5] == "LATE_":
+            LATE_RULE_MODULES.append(m)
+        else:
+            RULE_MODULES.append(module)
 
 def run_rename_rules_for_all_fuctions():
     global RULE_MODULES
+    global LATE_RULE_MODULES
     load_rules()
 
     for ea, obj in ALL_FUNC_INFO.items():
@@ -53,11 +57,15 @@ def run_rename_rules_for_all_fuctions():
                 break
         if rule_ret == RULE_FALSE:
             generic_rule(ea, obj)
-            pass
+        for module in LATE_RULE_MODULES:
+            module.rule_entry(ea, obj) # If RULE_FALSE or WEAK_RULE_TRUE
+
     RULE_MODULES.clear()
+    LATE_RULE_MODULES.clear()
 
 def run_rules_for_function_under_cursor():
     global RULE_MODULES
+    global LATE_RULE_MODULES
     load_rules()
 
     ea = ida_kernwin.get_screen_ea()
@@ -74,3 +82,4 @@ def run_rules_for_function_under_cursor():
         generic_rule(ea, obj)
         pass
     RULE_MODULES.clear()
+    LATE_RULE_MODULES.clear()
