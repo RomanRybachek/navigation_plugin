@@ -85,11 +85,15 @@ def handle_strings_xrefs(ea):
     def specific_part_for_xrefs_handler(func_info_obj, func_struct, ea):
         if func_info_obj == 0:
             func_info_obj = FuncInfo()
-            func_info_obj.strings += 1
+            func_info_obj.strings.update({ea:1})
             ALL_FUNC_INFO.update({func_struct.start_ea:func_info_obj})
         else:
-            func_info_obj.strings += 1
-        pass
+            count = func_info_obj.strings.get(ea, 0)
+            if count == 0:
+                func_info_obj.strings.update({ea:1})
+            else:
+                func_info_obj.strings.update({ea:count + 1})
+
     generic_part_for_xrefs_handler(ea, specific_part_for_xrefs_handler)
 
 def handle_data_xrefs(ea):
@@ -172,6 +176,10 @@ def setup_FuncInfo_objects():
 
         obj.loc_funcs_num           = len(obj.loc_funcs)
         obj.has_cycle               = detect_cycle(ea, obj)
+
+        for s, count in obj.strings.items():
+            obj.strings_num += count
+
         for imp, count in obj.import_calls.items():
             obj.import_calls_num += count
 

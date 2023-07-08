@@ -18,8 +18,9 @@ RULE_FALSE      = 2
 class FuncInfo:
     def __init__(self):
         self.size               = 0
-        self.strings            = 0
         self.global_data        = 0
+        self.strings            = {} # ea:count
+        self.strings_num        = 0
 
         self.import_calls       = {} # ea:count
         self.import_calls_num   = 0
@@ -39,6 +40,23 @@ class FuncInfo:
 
         self.has_cycle          = False
         self.hard_to_analyse    = False
+
+    def print_all(self):
+        for sub_r, sub_c in self.named_funcs.items():
+            print("named:", hex(sub_r), sub_c)
+        for loc in self.loc_funcs:
+            print("loc:", hex(loc))
+        for sub in self.sub_funcs:
+            print("sub:", hex(sub))
+        for imp in self.import_calls:
+            print("imp:", hex(imp))
+        if self.strings_num > 0:
+            print("Str:", self.strings_num)
+        if self.global_data > 0:
+            print("data:", self.global_data)
+        for sw in self.switches:
+            print("switch:", hex(sw))
+        print()
 
 def is_func(ea):
     func_t_struct =  ida_funcs.get_func(ea)
@@ -69,7 +87,7 @@ def get_info_for_name(ea, obj:FuncInfo):
     elif obj.hard_to_analyse == True:
         new_name = new_name + "cycleIsPossible_"
     new_name = add_tag("d", obj.global_data, new_name)
-    new_name = add_tag("s", obj.strings, new_name)
+    new_name = add_tag("s", obj.strings_num, new_name)
 
     if len(new_name) >= 1 and new_name[-1] == '_':
         new_name = new_name[:-1]

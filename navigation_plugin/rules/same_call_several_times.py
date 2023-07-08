@@ -42,7 +42,7 @@ def rule_entry(ea, obj:FuncInfo):
         new_name = new_name + "cycleIsPossible_"
 
     new_name = add_tag("d", obj.global_data, new_name)
-    new_name = add_tag("s", obj.strings, new_name)
+    new_name = add_tag("s", obj.strings_num, new_name)
 
     if len(new_name) >= 1 and new_name[-1] == '_':
         new_name = new_name[:-1]

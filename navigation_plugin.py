@@ -19,8 +19,8 @@ def print_all_funcinfo():
             print("sub:", hex(sub))
         for imp in v.import_calls:
             print("imp:", hex(imp))
-        if v.strings > 0:
-            print("Str:", v.strings)
+        if v.strings_num > 0:
+            print("Str:", v.strings_num)
         if v.global_data > 0:
             print("data:", v.global_data)
         for sw in v.switches:
