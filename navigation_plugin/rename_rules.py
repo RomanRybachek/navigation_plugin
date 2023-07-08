@@ -38,6 +38,7 @@ def load_rules():
     RULE_MODULES = modules
 
 def run_rename_rules_for_all_fuctions():
+    global RULE_MODULES
     load_rules()
 
     for ea, obj in ALL_FUNC_INFO.items():
@@ -45,17 +46,18 @@ def run_rename_rules_for_all_fuctions():
         if ida_name.get_ea_name(ea)[:4] != "sub_" and  \
             ida_name.get_ea_name(ea)[:4] != "nav_":
             continue
-        rule_ret = False
+        rule_ret = RULE_FALSE
         for module in RULE_MODULES:
-            rule_ret = module.rule_entry(ea, obj)
-            if rule_ret == True:
+            rule_ret = module.rule_entry(ea, obj) # If RULE_FALSE or WEAK_RULE_TRUE
+            if rule_ret == RULE_TRUE:
                 break
-        if rule_ret == False:
+        if rule_ret == RULE_FALSE:
             generic_rule(ea, obj)
             pass
     RULE_MODULES.clear()
 
 def run_rules_for_function_under_cursor():
+    global RULE_MODULES
     load_rules()
 
     ea = ida_kernwin.get_screen_ea()
@@ -66,9 +68,9 @@ def run_rules_for_function_under_cursor():
 
     for module in RULE_MODULES:
         rule_ret = module.rule_entry(ea, obj)
-        if rule_ret == True:
+        if rule_ret == RULE_TRUE:
             break
-    if rule_ret == False:
+    if rule_ret == RULE_FALSE:
         generic_rule(ea, obj)
         pass
     RULE_MODULES.clear()

@@ -10,6 +10,11 @@ import ida_bytes
 import ida_xref
 import ida_ua
 
+WEAK_RULE_TRUE  = 0
+RULE_TRUE       = 1
+RULE_FALSE      = 2
+
+
 class FuncInfo:
     def __init__(self):
         self.size               = 0

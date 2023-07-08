@@ -7,7 +7,7 @@ def rule_entry(ea, obj:FuncInfo):
     code_items = list(idautils.Heads(func_t_obj.start_ea, func_t_obj.end_ea))
     instr_num = len(code_items)
     if instr_num > 5:
-        return False
+        return RULE_FALSE
     
     new_name = 'nav_'
 
@@ -23,4 +23,4 @@ def rule_entry(ea, obj:FuncInfo):
         new_name = new_name[:-1]
     idaapi.set_name(ea, new_name, idaapi.SN_FORCE | idaapi.SN_NOCHECK)
     
-    return True
+    return WEAK_RULE_TRUE
