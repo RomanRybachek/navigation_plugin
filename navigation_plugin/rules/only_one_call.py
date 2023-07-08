@@ -9,12 +9,13 @@ def exectly_wrap(ea, obj:FuncInfo):
         return False
     return True
 
-def rule_entry(ea, obj:FuncInfo):
-    def add_tag(tag, val, source_str):
-        if val == 0:
-            return source_str
-        source_str = source_str + tag + str(val) + "_"
+def add_tag(tag, val, source_str):
+    if val == 0:
         return source_str
+    source_str = source_str + tag + str(val) + "_"
+    return source_str
+
+def rule_entry(ea, obj:FuncInfo):
 
     new_name = 'nav_'
 
