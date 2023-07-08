@@ -54,3 +54,21 @@ def run_rename_rules_for_all_fuctions():
             generic_rule(ea, obj)
             pass
     RULE_MODULES.clear()
+
+def run_rules_for_function_under_cursor():
+    load_rules()
+
+    ea = ida_kernwin.get_screen_ea()
+    obj = ALL_FUNC_INFO.get(ea, None)
+    if obj == None:
+        print("There is no unexplored function under cursor")
+        return
+
+    for module in RULE_MODULES:
+        rule_ret = module.rule_entry(ea, obj)
+        if rule_ret == True:
+            break
+    if rule_ret == False:
+        generic_rule(ea, obj)
+        pass
+    RULE_MODULES.clear()

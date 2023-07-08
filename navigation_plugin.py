@@ -93,6 +93,7 @@ def main():
     init()
     basic_analysis()
     run_rename_rules_for_all_fuctions()
+    # run_rules_for_function_under_cursor()
     fini()
 
 class navigation_plugin_class(idaapi.plugin_t):

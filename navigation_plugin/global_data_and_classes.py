@@ -61,7 +61,7 @@ def get_info_for_name(ea, obj:FuncInfo):
     if obj.has_cycle == True:
         name = name + "cycle_"
     elif obj.hard_to_analyse == True:
-        name = name + "cycle_is_possible_"
+        name = name + "cycleIsPossible_"
     name = add_tag("d", obj.global_data, name)
     name = add_tag("s", obj.strings, name)
 

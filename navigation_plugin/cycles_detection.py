@@ -46,7 +46,7 @@ def tree(tree:ida_gdl.FlowChart, ea, obj:FuncInfo):
             deep += 1
             deep_restr = 5000
             if deep == deep_restr:
-                print("Functions at address", hex(ea), "is too difficult to detect cycles.")
+                print("Functions at address", hex(ea), "is too difficult to detect cycles. Restriction =", deep_restr)
                 obj.hard_to_analyse = True
                 return False
             # print(curr_node.ch_passed, "/", curr_node.ch_max) 

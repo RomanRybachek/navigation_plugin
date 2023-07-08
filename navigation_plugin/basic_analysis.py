@@ -171,6 +171,7 @@ def setup_FuncInfo_objects():
         obj.size                    = func_t_obj.size()
 
         obj.loc_funcs_num           = len(obj.loc_funcs)
+        # if ea == 0x140050D40:   # for debug
         obj.has_cycle               = detect_cycle(ea, obj)
         for imp, count in obj.import_calls.items():
             obj.import_calls_num += count
