@@ -36,10 +36,9 @@ It looks long, but not every function has all the tags like this one. Shorter ex
 This rule renames functions that have less than 5 lines of asm code.<br />
 <img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny2.png" alt="drawing" width="200"/>
 <img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny4.png" alt="drawing" width="200"/>
-<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny1.png" alt="drawing" width="200"/>
-<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny6.png" alt="drawing" width="200"/>
 <img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny3.png" alt="drawing" width="200"/>
-
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny1.png" alt="drawing" width="100"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny6.png" alt="drawing" width="100"/>
 ### Only_one_call rule:
 This rule renames functions that have only one call.<br />
 <img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/one3.png" alt="drawing" width="200"/>
@@ -47,6 +46,9 @@ This rule renames functions that have only one call.<br />
 <img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/one4.png" alt="drawing" width="200"/>
 <img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/one1.png" alt="drawing" width="200"/>
 ### Same_call_several_times:
-This rule renames functions that have several calls of the same function and have no other calls.
+This rule renames functions that have several calls of the same function and have no other calls.<br />
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/times2.png" alt="drawing" width="150"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/times1.png" alt="drawing" width="180"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/times.png" alt="drawing" width="180"/>
 ### LATE_set_tag_by_string:
 This rule adds tags if it found usage of specified strings.
