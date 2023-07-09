@@ -53,7 +53,26 @@ This rule renames functions that have several calls of the same function and hav
 ### LATE_set_tag_by_string:
 This rule adds tags if it found usage of specified strings. It just add to the end of the name of the function "paths" or "urls" if strings that the functions uses contain something related with paths or urls.
 ## How to create your own rule:
-This is the folder with rules. All rules that are there can be deleted or changed. You can add your own rule to this folder.
+This is the folder with rules. All rules that are there can be deleted or changed. You can add your own rule to this folder.<br />
+
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/folder_with_rules.png" alt="drawing" width="200"/><br />
+
+This is an example of simple rule that do nothing. You can find it in navigation_plugin/rules/example_of_rule.py.<br />
+
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/simple_rule_that_does_nothing.png" alt="drawing" width="500"/><br />
+
+A rule must return one of these values:
+```
+rule_exit(RULE_TRUE, ea, obj, new_name) 
+rule_exit(WEAK_RULE_TRUE, ea, obj, new_name) 
+rule_exit(RULE_FALSE)
+```
+The function **rule_exit** changes function name in IDA and return RULE_TRUE, WEAK_RULE_TRUE or RULE_FALSE.<br />
+**RULE_TRUE** - the function satisfies the conditions of the rule. The rule will be applied. Other rules will be ignored. <br />
+**WEAK_RULE_TRUE** - the function satisfies the conditions of the rule. The rule will be applied, but there will be attempt to apply other rules. <br />
+**RULE_FALSE** - the function does not satisfies the conditions of the rule. There will be attempt to apply other rules. <br />
+
+The parametr obj:FuncInfo is defined in global_data_and_classes.py. It has info about all xrefs that function uses.
 ## Installation:
 Just copy navigation_plugin.py and navigation_plugin folder in %path_to_ida%\plugins.
 ## Usage:
