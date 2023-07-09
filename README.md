@@ -51,4 +51,4 @@ This rule renames functions that have several calls of the same function and hav
 <img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/times1.png" alt="drawing" width="180"/>
 <img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/times.png" alt="drawing" width="180"/>
 ### LATE_set_tag_by_string:
-This rule adds tags if it found usage of specified strings.
+This rule adds tags if it found usage of specified strings. It just add to the end of the name of the function "paths" or "urls" if strings that the functions uses contain something related with paths or urls.
