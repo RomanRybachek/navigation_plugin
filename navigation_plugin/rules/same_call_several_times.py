@@ -4,7 +4,7 @@ idaapi.require("navigation_plugin.global_data_and_classes")
 
 def rule_entry(ea, obj:FuncInfo):
     if obj.calls <= 1:
-        return RULE_FALSE
+        return rule_exit(RULE_FALSE)
     
     num_groups_of_call = 0
     if obj.sub_funcs_num != 0:
@@ -15,7 +15,7 @@ def rule_entry(ea, obj:FuncInfo):
         num_groups_of_call += 1
     
     if num_groups_of_call != 1:
-        return RULE_FALSE
+        return rule_exit(RULE_FALSE)
 
     new_name = 'nav_'
 
@@ -31,7 +31,7 @@ def rule_entry(ea, obj:FuncInfo):
         func_name = ida_name.get_ea_name(list(obj.import_calls.keys())[0])
         new_name += str(count) + "times_of_" + func_name + "_"
     else:
-        return RULE_FALSE
+        return rule_exit(RULE_FALSE)
 
     new_name = add_tag("loc", obj.loc_funcs_num, new_name)
     new_name = add_tag("switch", obj.switches_num, new_name)
@@ -46,5 +46,4 @@ def rule_entry(ea, obj:FuncInfo):
 
     if len(new_name) >= 1 and new_name[-1] == '_':
         new_name = new_name[:-1]
-    idaapi.set_name(ea, new_name, idaapi.SN_FORCE | idaapi.SN_NOCHECK)
-    return RULE_TRUE
+    return rule_exit(RULE_TRUE, ea, obj, new_name)

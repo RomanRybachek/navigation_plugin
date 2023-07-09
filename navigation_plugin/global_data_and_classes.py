@@ -1,3 +1,4 @@
+import idaapi
 import ida_name
 import ida_nalt
 import ida_lines
@@ -40,8 +41,10 @@ class FuncInfo:
 
         self.has_cycle          = False
         self.hard_to_analyse    = False
+        self.new_name           = ''
 
     def print_all(self):
+        print("name:", self.new_name)
         for sub_r, sub_c in self.named_funcs.items():
             print("named:", hex(sub_r), sub_c)
         for loc in self.loc_funcs:
@@ -68,6 +71,12 @@ if 'ALL_FUNC_INFO' not in globals():
     ALL_FUNC_INFO = {}
 if 'ALL_IMP' not in globals(): 
     ALL_IMP = {}
+
+def rule_exit(return_code, ea:int = None, obj:FuncInfo = None, new_name:str = ''):
+    if return_code == RULE_TRUE or return_code == WEAK_RULE_TRUE:
+        obj.new_name = new_name
+        idaapi.set_name(ea, new_name, idaapi.SN_FORCE | idaapi.SN_NOCHECK)
+    return return_code
 
 def add_tag(tag, val, source_str):
     if val == 0:

@@ -18,7 +18,7 @@ def rule_entry(ea, obj:FuncInfo):
         obj.has_cycle == True or \
         obj.loc_funcs_num != 0:
 
-        return RULE_FALSE
+        return rule_exit(RULE_FALSE)
 
     if exectly_wrap(ea, obj) == True:
         new_name += "wrap_"
@@ -40,5 +40,4 @@ def rule_entry(ea, obj:FuncInfo):
     if len(new_name) >= 1 and new_name[-1] == '_':
         new_name = new_name[:-1]
 
-    idaapi.set_name(ea, new_name, idaapi.SN_FORCE | idaapi.SN_NOCHECK)
-    return RULE_TRUE
+    return rule_exit(RULE_TRUE, ea, obj, new_name)

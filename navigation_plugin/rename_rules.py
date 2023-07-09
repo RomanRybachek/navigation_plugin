@@ -20,10 +20,9 @@ LATE_RULE_MODULES = []
 
 def generic_rule(ea, obj:FuncInfo):
     name = "nav_" + get_info_for_name(ea, obj)
-    idaapi.set_name(ea, name, idaapi.SN_FORCE | idaapi.SN_NOCHECK)
     if len(name) >= 1 and name[-1] == '_':
         name = name[:-1]
-    return True
+    return rule_exit(RULE_TRUE, ea, obj, name)
 
 def load_rules():
     global RULE_MODULES
@@ -31,18 +30,19 @@ def load_rules():
     
     cur_dir = __file__[:-len("rename_rules.py")]
     modules_names = ["navigation_plugin.rules." + i[:-3] for i in os.listdir(cur_dir + "rules") if i[-3:] == ".py" and i != "__init__.py"]
-    modules = []
     for m in modules_names:
         module = __import__(m, fromlist=["rule_entry"])
         importlib.reload(module)
-        if len(m) >= 5 and m[:5] == "LATE_":
-            LATE_RULE_MODULES.append(m)
+        if m.find("LATE_") != -1:
+            LATE_RULE_MODULES.append(module)
         else:
             RULE_MODULES.append(module)
 
 def run_rename_rules_for_all_fuctions():
     global RULE_MODULES
     global LATE_RULE_MODULES
+    RULE_MODULES.clear()
+    LATE_RULE_MODULES.clear()
     load_rules()
 
     for ea, obj in ALL_FUNC_INFO.items():
