@@ -34,13 +34,18 @@ It looks long, but not every function has all the tags like this one. Shorter ex
 ## Custom rules:
 ### Tiny_functions rule:
 This rule renames functions that have less than 5 lines of asm code.<br />
-![tiny2](https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny2.png)
-![tiny3](https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny3.png)
-![tiny4](https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny4.png)
-![tiny6](https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny6.png)
-![tiny1](https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny1.png)
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny2.png" alt="drawing" width="200"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny4.png" alt="drawing" width="200"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny1.png" alt="drawing" width="200"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny6.png" alt="drawing" width="200"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/tiny3.png" alt="drawing" width="200"/>
+
 ### Only_one_call rule:
-This rule renames functions that have only one call.
+This rule renames functions that have only one call.<br />
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/one3.png" alt="drawing" width="200"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/one2.png" alt="drawing" width="200"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/one4.png" alt="drawing" width="200"/>
+<img src="https://github.com/RomanRybachek/navigation_plugin/blob/main/pictures_for_github/one1.png" alt="drawing" width="200"/>
 ### Same_call_several_times:
 This rule renames functions that have several calls of the same function and have no other calls.
 ### LATE_set_tag_by_string:
