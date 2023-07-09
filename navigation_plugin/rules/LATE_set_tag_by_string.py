@@ -3,7 +3,7 @@ from navigation_plugin.global_data_and_classes import *
 idaapi.require("navigation_plugin.global_data_and_classes")
 
 path_strings    = [b"c:", b".exe", b".txt", b".dll", b'.tmp', \
-                   b".c", b".h", b".cpp", b".tmp"]
+                   b".cpp", b".tmp"]
 url_strings     = [b"http:", b"https:", b"www"]
 
 def is_contain_str(target_str:bytes, substr:bytes):
