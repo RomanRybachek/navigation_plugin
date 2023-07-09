@@ -20,21 +20,21 @@ class FuncInfo:
     def __init__(self):
         self.size               = 0
         self.global_data        = 0
-        self.strings            = {} # ea:count
+        self.strings            = {}    # ea:count
         self.strings_num        = 0
 
-        self.import_calls       = {} # ea:count
+        self.import_calls       = {}    # ea:count
         self.import_calls_num   = 0
 
         self.loc_funcs          = set()
         self.loc_funcs_num      = 0
-        self.sub_funcs          = {} # ea:count
+        self.sub_funcs          = {}    # ea:count
         self.sub_funcs_num      = 0
-        self.named_funcs        = {} # ea:count
+        self.named_funcs        = {}    # ea:count
         self.named_funcs_num    = 0
-        self.internal_calls     = 0 #sub_ and named functions
+        self.internal_calls     = 0     # sub_ and named functions
 
-        self.calls              = 0 # internals and import calls
+        self.calls              = 0     # internals and import calls
 
         self.switches           = set()
         self.switches_num       = 0
