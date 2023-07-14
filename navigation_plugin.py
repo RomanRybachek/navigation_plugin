@@ -102,7 +102,7 @@ class navigation_plugin_class(idaapi.plugin_t):
     comment = "This plugin helps to navigate among the large number of unexplored functions in the ida pro disassembler."
     help = ""
     wanted_name = "navigation_plugin"
-    wanted_hotkey = "Ctrl+F7"
+    #wanted_hotkey = "Ctrl+N"
 
     def init(self):
         idaapi.msg("Navigation_plugin init() called!\n")
