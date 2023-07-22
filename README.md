@@ -6,19 +6,25 @@ When you are reverse-engineering a huge file and don't have time to analyze ever
 - It is easy to write your own rules or remove existing ones, because each rule is in its own python file and all you need to create a rule is to create a file in the rules folder with a function that has a specific name and prototype.
 ## Generic rule for renaming functions
 The generic rule makes names like this:
-> nav_loc70_sub5_named3_imp6_switch2_cycle_d10_s5
-
+```
+nav_loc70_sub5_named3_imp6_switch2_cycle_d10_s5
+```
 It looks long, but not every function has all the tags like this one. Shorter examples:
-> nav_loc84_switch1_d1
-
-> nav_sub1_named3_d6
-
-> nav_imp2
-
-> nav_loc6_imp1
-
-> nav_loc1_cycle_s1
-
+```
+nav_loc84_switch1_d1
+```
+```
+nav_sub1_named3_d6
+```
+```
+nav_imp2
+```
+```
+nav_loc6_imp1
+```
+```
+nav_loc1_cycle_s1
+```
 ### Tags:
 **nav** - means that function has been renamed with this plugin.<br />
 **loc** - shows number of local routines inside the function. It helps to determine the level of complexity of the function.<br />
