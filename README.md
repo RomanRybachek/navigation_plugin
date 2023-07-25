@@ -79,7 +79,9 @@ The function **rule_exit** changes function name in IDA and return RULE_TRUE, WE
 **RULE_FALSE** - the function does not satisfies the conditions of the rule. There will be attempt to apply other rules. <br />
 
 The parametr obj:FuncInfo is defined in global_data_and_classes.py. It has info about all xrefs that function uses.
+
+If you want your rule runs anyway, you can add to your rule name "LATE_" prefix. Rules with that prefix run after other rules. But your rule still must exit with ```rule_exit(RULE_TRUE, ea, obj, new_name)``` or ```rule_exit(RULE_FALSE)```.
 ## Installation:
 Just copy navigation_plugin.py and navigation_plugin folder in %path_to_ida%\plugins.
 ## Usage:
-Press ctrl+f7 in IDA. It will take some time.
+Edit->Plugins->navigation_plugin
