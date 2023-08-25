@@ -1,18 +1,14 @@
 import idaapi
 import idc
+import ida_lines
+import idautils
 
 from navigation_plugin.global_data_and_classes import *
 idaapi.require("navigation_plugin.global_data_and_classes")
 
 def check_RtlQueryRegistryValues(ea, obj:FuncInfo):
-    if obj.import_calls_num != 3:
-        return RULE_FALSE 
-    if obj.loc_funcs_num != 2:
-        return RULE_FALSE 
-    if obj.has_cycle != True:
-        return RULE_FALSE 
-    if obj.strings_num != 1:
-        return RULE_FALSE 
+    if fingerprint(obj, 2, 3, None, True, 0, None, 1) == False:
+        return RULE_FALSE
 
     s_ea = list(obj.strings)[0]
     s_type = idc.get_str_type(s_ea)
@@ -22,9 +18,31 @@ def check_RtlQueryRegistryValues(ea, obj:FuncInfo):
     else:
         return RULE_FALSE 
 
+def check_memset(ea, obj:FuncInfo):
+    if fingerprint(obj, 7, None, 1, True, None, 1, None) == False:
+        return RULE_FALSE
+    ins = list(idautils.FuncItems(ea))
+    line = idc.GetDisasm(ins[2])
+    if line.find("101010101010101") != -1:
+        return RULE_TRUE
+    return RULE_FALSE
+
+def check_memmove(ea, obj:FuncInfo):
+    if fingerprint(obj, 23, 0, 0, True, None, 0, 0) == False:
+        return RULE_FALSE
+    ins = list(idautils.FuncItems(ea))
+    jb = idc.GetDisasm(ins[2])
+    ja = idc.GetDisasm(ins[4])
+    if jb.find("jb") != -1 and ja.find("ja") != -1:
+        return RULE_TRUE
+ 
 def rule_entry(ea, obj:FuncInfo):
     if check_RtlQueryRegistryValues(ea, obj) == RULE_TRUE:
         return rule_exit(RULE_TRUE, ea, obj, "nav_RtlQueryRegistryValues")
+    elif check_memset(ea, obj) == RULE_TRUE:
+        return rule_exit(RULE_TRUE, ea, obj, "nav_memset")
+    elif check_memmove(ea, obj) == RULE_TRUE:
+        return rule_exit(RULE_TRUE, ea, obj, "nav_memmove")
     else:
         return rule_exit(RULE_FALSE)
  

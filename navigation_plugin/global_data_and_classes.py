@@ -101,3 +101,20 @@ def get_info_for_name(ea, obj:FuncInfo):
     if len(new_name) >= 1 and new_name[-1] == '_':
         new_name = new_name[:-1]
     return new_name
+
+def fingerprint(obj:FuncInfo, loc, imp, internal_calls, has_cycle, switches, d, s):
+    if loc != None and obj.loc_funcs_num != loc:
+        return False
+    if imp != None and obj.import_calls_num != imp:
+        return False
+    if internal_calls != None and obj.internal_calls != internal_calls:
+        return False
+    if has_cycle != None and obj.has_cycle != has_cycle:
+        return False
+    if switches != None and obj.switches_num != switches:
+        return False
+    if d != None and obj.global_data != d:
+        return False
+    if s != None and obj.strings_num != s:
+        return False
+    return True
