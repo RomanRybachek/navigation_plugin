@@ -14,7 +14,6 @@ def check_import_several_functions(ea, obj: FuncInfo):
     for i in s:
         s_type = idc.get_str_type(i)
         content = idc.get_strlit_contents(i, -1, s_type)
-        print(content)
         if content in s_f:
             c += 1
     if c == 5:
